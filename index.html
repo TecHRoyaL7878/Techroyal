@@ -230,17 +230,19 @@
         }
 
         function addStudent() {
-            let cls = document.getElementById('classSelect').value;
-            let name = document.getElementById('studentName').value.trim();
-            if(cls && name) {
-                db.students[cls].push(name);
-                save();
-                renderStudentsList();
-                document.getElementById('studentName').value = '';
-                // Add this line after db.students[cls].push(name);
-                sendToGoogleSheets('New Student', { className: cls, studentName: name });
-            }
-        }
+    let cls = document.getElementById('classSelect').value;
+    let name = document.getElementById('studentName').value.trim();
+    if(cls && name) {
+        db.students[cls].push(name);
+        save();
+        renderStudentsList();
+        
+        // ADD THIS LINE - Note 'className' and 'studentName'
+        sendToGoogleSheets('New Student', { className: cls, studentName: name });
+        
+        document.getElementById('studentName').value = '';
+    }
+}
 
         function deleteStudent(studentName) {
             let cls = document.getElementById('classSelect').value;
@@ -385,23 +387,22 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbycwEMzAi8UOei3a7oPzhzTgBPjA-cc4h4PedQ9E1qVxwz1zMhzoa2P6whaEkBw8Ysl2w/exec';
 
     function sendToGoogleSheets(dataType, dataPayload) {
-        // Create a form-style body
-        const formData = new URLSearchParams();
-        formData.append('type', dataType); // Tells the sheet if it's Attendance, Student, etc.
-        
-        // Flatten the data object into the form
-        for (const key in dataPayload) {
-            formData.append(key, dataPayload[key]);
-        }
-
-        fetch(scriptURL, { 
-            method: 'POST', 
-            body: formData,
-            mode: 'no-cors' // This prevents errors from GitHub's security
-        })
-        .then(() => console.log('Data synced to Google Sheets'))
-        .catch(error => console.error('Sync Error:', error));
+    const formData = new URLSearchParams();
+    formData.append('type', dataType); 
+    
+    // This part ensures names like "className" are sent exactly as they are
+    for (const key in dataPayload) {
+        formData.append(key, dataPayload[key]);
     }
+
+    fetch(scriptURL, { 
+        method: 'POST', 
+        body: formData,
+        mode: 'no-cors' 
+    })
+    .then(() => console.log('Data synced: ' + dataType))
+    .catch(error => console.error('Sync Error:', error));
+}
 </script>
 </body>
 </html>
