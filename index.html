@@ -16,10 +16,23 @@
         .header { 
             background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
-            align-items: center; flex-wrap: wrap; gap: 10px;
+            align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
         }
         .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
         
+        /* Sync Indicator Styles */
+        #syncStatus {
+            position: absolute; top: 10px; right: 20px; font-size: 12px;
+            padding: 5px 12px; border-radius: 20px; background: #f3f4f6;
+            display: flex; align-items: center; gap: 5px; font-weight: bold;
+        }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #9ca3af; }
+        .syncing .sync-dot { background: #3b82f6; animation: pulse 1s infinite; }
+        .sync-success .sync-dot { background: #10b981; }
+        .sync-error .sync-dot { background: #ef4444; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
         #loginPage { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
@@ -75,6 +88,9 @@
     <div id="mainApp" style="display: none;">
         <div class="container">
             <div class="header">
+                <div id="syncStatus" class="">
+                    <span class="sync-dot"></span> <span id="syncText">Cloud Idle</span>
+                </div>
                 <div class="clock" id="clock">00:00:00</div>
                 <div id="currentDate"></div>
             </div>
@@ -169,6 +185,8 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbycwEMzAi8UOei3a7oPzhzTgBPjA-cc4h4PedQ9E1qVxwz1zMhzoa2P6whaEkBw8Ysl2w/exec';
+
         function login() {
             if(document.getElementById('usernameInput').value) {
                 document.getElementById('loginPage').style.display='none';
@@ -230,19 +248,16 @@
         }
 
         function addStudent() {
-    let cls = document.getElementById('classSelect').value;
-    let name = document.getElementById('studentName').value.trim();
-    if(cls && name) {
-        db.students[cls].push(name);
-        save();
-        renderStudentsList();
-        
-        // ADD THIS LINE - Note 'className' and 'studentName'
-        sendToGoogleSheets('New Student', { className: cls, studentName: name });
-        
-        document.getElementById('studentName').value = '';
-    }
-}
+            let cls = document.getElementById('classSelect').value;
+            let name = document.getElementById('studentName').value.trim();
+            if(cls && name) {
+                db.students[cls].push(name);
+                save();
+                renderStudentsList();
+                sendToGoogleSheets('New Student', { className: cls, studentName: name });
+                document.getElementById('studentName').value = '';
+            }
+        }
 
         function deleteStudent(studentName) {
             let cls = document.getElementById('classSelect').value;
@@ -288,21 +303,27 @@
             let date = document.getElementById('attendanceDate').value;
             let cls = document.getElementById('attClassSelect').value;
             let rows = document.querySelectorAll('#attendanceSheet .att-row');
-            
-            // Remove previous entries for this date/class to avoid duplicates
+            if(!cls) return alert("Select a class first");
+
             db.attendance = db.attendance.filter(a => !(a.date === date && a.className === cls));
 
             rows.forEach(row => {
                 let name = row.getAttribute('data-name');
                 let activeBtn = row.querySelector('.att-btn.active');
-                // Add this inside the if(activeBtn) block
-                sendToGoogleSheets('Attendance', { date: date, className: cls, student: name, status: activeBtn.innerText });
                 if(activeBtn) {
-                    db.attendance.push({ date, className: cls, student: name, status: activeBtn.innerText === 'P' ? 'Present' : 'Absent' });
+                    let statusValue = activeBtn.innerText === 'P' ? 'Present' : 'Absent';
+                    db.attendance.push({ date, className: cls, student: name, status: statusValue });
+                    // Labels corrected for Google Sheets
+                    sendToGoogleSheets('Attendance', { 
+                        date: date, 
+                        className: cls, 
+                        student: name, 
+                        status: statusValue 
+                    });
                 }
             });
             save();
-            alert("Attendance Saved!");
+            alert("Attendance Saved and Syncing!");
         }
 
         function loadFeeStudents() {
@@ -314,42 +335,35 @@
             let cls = document.getElementById('feeClassSelect').value;
             let name = document.getElementById('feeStudentSelect').value;
             let amt = document.getElementById('payAmount').value;
-            if(amt) {
-                db.payments.push({ className: cls, student: name, amount: parseFloat(amt), date: new Date().toISOString().split('T')[0] });
+            let today = new Date().toISOString().split('T')[0];
+
+            if(amt && name) {
+                db.payments.push({ className: cls, student: name, amount: parseFloat(amt), date: today });
                 save();
-                alert("Payment Recorded!");
-                // Add this line after db.payments.push(...)
-                sendToGoogleSheets('Payment', { className: cls, student: name, amount: amt, date: new Date().toLocaleDateString() });
+                // Labels corrected for Google Sheets
+                sendToGoogleSheets('Payment', { 
+                    className: cls, 
+                    student: name, 
+                    amount: amt, 
+                    date: today 
+                });
+                alert("Payment Recorded and Syncing!");
+                document.getElementById('payAmount').value = '';
             }
         }
 
-        // UPDATED ATTENDANCE HISTORY: CALENDAR + CLASS FILTER
         function showDailyAttendanceReport() {
             let date = document.getElementById('histAttDate').value;
             let cls = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
             tbody.innerHTML = '';
-
             if(!cls || !date) return;
-
             let studentsInClass = (db.students[cls] || []).sort();
-            
             studentsInClass.forEach(s => {
                 let record = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
-                let statusText = "Not Marked";
-                let statusClass = "status-none";
-
-                if (record) {
-                    statusText = record.status;
-                    statusClass = record.status === 'Present' ? 'status-present' : 'status-absent';
-                }
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${s}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    </tr>
-                `;
+                let statusText = record ? record.status : "Not Marked";
+                let statusClass = record ? (record.status === 'Present' ? 'status-present' : 'status-absent') : "status-none";
+                tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
             });
         }
 
@@ -381,28 +395,33 @@
         function downloadPayPDF() {
             html2pdf().from(document.getElementById('payReportArea')).save('Payment_Report.pdf');
         }
+
+        function updateSyncUI(status) {
+            const el = document.getElementById('syncStatus');
+            const txt = document.getElementById('syncText');
+            el.className = status;
+            if(status === 'syncing') txt.innerText = 'Syncing...';
+            if(status === 'sync-success') txt.innerText = 'Synced to Cloud';
+            if(status === 'sync-error') txt.innerText = 'Sync Failed';
+            setTimeout(() => { if(status !== 'syncing') { el.className = ''; txt.innerText = 'Cloud Idle'; } }, 3000);
+        }
+
+        function sendToGoogleSheets(dataType, dataPayload) {
+            updateSyncUI('syncing');
+            const formData = new URLSearchParams();
+            formData.append('type', dataType); 
+            for (const key in dataPayload) { formData.append(key, dataPayload[key]); }
+
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+            .then(() => {
+                console.log('Data synced: ' + dataType);
+                updateSyncUI('sync-success');
+            })
+            .catch(error => {
+                console.error('Sync Error:', error);
+                updateSyncUI('sync-error');
+            });
+        }
     </script>
-    <script>
-    // THE BRIDGE: This sends your local data to Google Sheets
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbycwEMzAi8UOei3a7oPzhzTgBPjA-cc4h4PedQ9E1qVxwz1zMhzoa2P6whaEkBw8Ysl2w/exec';
-
-    function sendToGoogleSheets(dataType, dataPayload) {
-    const formData = new URLSearchParams();
-    formData.append('type', dataType); 
-    
-    // This part ensures names like "className" are sent exactly as they are
-    for (const key in dataPayload) {
-        formData.append(key, dataPayload[key]);
-    }
-
-    fetch(scriptURL, { 
-        method: 'POST', 
-        body: formData,
-        mode: 'no-cors' 
-    })
-    .then(() => console.log('Data synced: ' + dataType))
-    .catch(error => console.error('Sync Error:', error));
-}
-</script>
 </body>
 </html>
