@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management - Attendance & Fees</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh; color: #333;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { 
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
+            align-items: center; flex-wrap: wrap; gap: 10px;
+        }
+        .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
+        
+        #loginPage { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+            align-items: center; justify-content: center;
+        }
+        .login-box { 
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+        }
+        
+        .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; }
+        .tab-btn.active { background: #667eea; color: white; }
+
+        .tab-content { display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 60vh; }
+        .tab-content.active { display: block; }
+
+        .form-group { margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
+        
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-danger { background: #ef4444; color: white; padding: 8px 15px; font-size: 14px; }
+        .btn-success { background: #10b981; color: white; }
+
+        .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
+        
+        .att-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .att-btns { display: flex; gap: 10px; }
+        .att-btn { padding: 8px 15px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; }
+        .att-btn.present.active { background: #10b981; color: white; border-color: #10b981; }
+        .att-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; }
+        th { background: #667eea; color: white; }
+
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        .status-present { background: #d1fae5; color: #065f46; }
+        .status-absent { background: #fee2e2; color: #991b1b; }
+        .status-none { background: #f3f4f6; color: #374151; }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage">
+        <div class="login-box">
+            <h2>🏫 School System</h2>
+            <input type="text" id="usernameInput" placeholder="Username">
+            <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <div class="clock" id="clock">00:00:00</div>
+                <div id="currentDate"></div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('classes')">Classes</button>
+                <button class="tab-btn" onclick="switchTab('students')">Students</button>
+                <button class="tab-btn" onclick="switchTab('attendance')">📋 Attendance</button>
+                <button class="tab-btn" onclick="switchTab('fees')">💰 Fees</button>
+                <button class="tab-btn" onclick="switchTab('att-history')">📅 Attendance History</button>
+                <button class="tab-btn" onclick="switchTab('pay-history')">📊 Payment History</button>
+            </div>
+
+            <div id="classes" class="tab-content active">
+                <h2>Manage Classes</h2>
+                <div class="form-group">
+                    <input type="text" id="newClassName" placeholder="Class Name">
+                    <button class="btn btn-primary" onclick="addClass()">Add Class</button>
+                </div>
+                <div id="classesList" class="list-container"></div>
+            </div>
+
+            <div id="students" class="tab-content">
+                <h2>Manage Students</h2>
+                <select id="classSelect" onchange="renderStudentsList()"></select>
+                <div class="form-group" style="margin-top:15px">
+                    <input type="text" id="studentName" placeholder="Student Name">
+                    <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+                </div>
+                <div id="studentsList" class="list-container"></div>
+            </div>
+
+            <div id="attendance" class="tab-content">
+                <h2>Mark Attendance</h2>
+                <div class="form-group">
+                    <label>Select Date:</label>
+                    <input type="date" id="attendanceDate">
+                    <label>Select Class:</label>
+                    <select id="attClassSelect" onchange="loadAttendanceSheet()"></select>
+                </div>
+                <div id="attendanceSheet" class="list-container"></div>
+                <button class="btn btn-success" style="margin-top:20px; width:100%" onclick="saveAttendance()">✅ Save Attendance</button>
+            </div>
+
+            <div id="fees" class="tab-content">
+                <h2>Record Payment</h2>
+                <select id="feeClassSelect" onchange="loadFeeStudents()"></select>
+                <select id="feeStudentSelect" style="margin-top:10px"></select>
+                <input type="number" id="payAmount" placeholder="Amount ₹" style="margin-top:10px">
+                <button class="btn btn-success" style="width:100%; margin-top:10px" onclick="recordPayment()">Record Fee</button>
+            </div>
+
+            <div id="att-history" class="tab-content">
+                <h2>📅 View Attendance Records</h2>
+                <div class="form-group">
+                    <label>Select Date:</label>
+                    <input type="date" id="histAttDate" onchange="showDailyAttendanceReport()">
+                    <label>Select Class:</label>
+                    <select id="histAttClassSelect" onchange="showDailyAttendanceReport()"></select>
+                </div>
+                <table id="attHistTable">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Status (Selected Date)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="pay-history" class="tab-content">
+                <div id="payReportArea">
+                    <h2>📊 Payment History (Full Report)</h2>
+                    <select id="histPayClassSelect" onchange="showFullPaymentReport()"></select>
+                    <table id="payHistTable">
+                        <thead><tr><th>Student Name</th><th>Total Paid</th><th>Last Date</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:10px">Download PDF Report</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let db = {
+            classes: JSON.parse(localStorage.getItem('sc_classes')) || [],
+            students: JSON.parse(localStorage.getItem('sc_students')) || {},
+            payments: JSON.parse(localStorage.getItem('sc_payments')) || [],
+            attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
+        };
+
+        function login() {
+            if(document.getElementById('usernameInput').value) {
+                document.getElementById('loginPage').style.display='none';
+                document.getElementById('mainApp').style.display='block';
+                init();
+            }
+        }
+
+        function init() {
+            updateClock();
+            setInterval(updateClock, 1000);
+            document.getElementById('currentDate').innerText = new Date().toDateString();
+            document.getElementById('attendanceDate').valueAsDate = new Date();
+            document.getElementById('histAttDate').valueAsDate = new Date();
+            refreshDropdowns();
+            renderClasses();
+        }
+
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function addClass() {
+            let name = document.getElementById('newClassName').value.trim();
+            if(name && !db.classes.includes(name)) {
+                db.classes.push(name);
+                db.students[name] = [];
+                save();
+                renderClasses();
+                refreshDropdowns();
+                document.getElementById('newClassName').value = '';
+            }
+        }
+
+        function deleteClass(className) {
+            if(confirm(`Delete class ${className}? This also removes all students.`)) {
+                db.classes = db.classes.filter(c => c !== className);
+                delete db.students[className];
+                save();
+                renderClasses();
+                refreshDropdowns();
+            }
+        }
+
+        function renderClasses() {
+            document.getElementById('classesList').innerHTML = db.classes.map(c => `
+                <div class="att-row">
+                    <span><b>${c}</b></span>
+                    <button class="btn btn-danger" onclick="deleteClass('${c}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function addStudent() {
+            let cls = document.getElementById('classSelect').value;
+            let name = document.getElementById('studentName').value.trim();
+            if(cls && name) {
+                db.students[cls].push(name);
+                save();
+                renderStudentsList();
+                document.getElementById('studentName').value = '';
+            }
+        }
+
+        function deleteStudent(studentName) {
+            let cls = document.getElementById('classSelect').value;
+            if(confirm(`Remove ${studentName} from ${cls}?`)) {
+                db.students[cls] = db.students[cls].filter(s => s !== studentName);
+                save();
+                renderStudentsList();
+            }
+        }
+
+        function renderStudentsList() {
+            let cls = document.getElementById('classSelect').value;
+            document.getElementById('studentsList').innerHTML = (db.students[cls] || []).map(s => `
+                <div class="att-row">
+                    <span>${s}</span>
+                    <button class="btn btn-danger" onclick="deleteStudent('${s}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function loadAttendanceSheet() {
+            let cls = document.getElementById('attClassSelect').value;
+            let container = document.getElementById('attendanceSheet');
+            let list = db.students[cls] || [];
+            container.innerHTML = list.map(s => `
+                <div class="att-row" data-name="${s}">
+                    <span>${s}</span>
+                    <div class="att-btns">
+                        <button class="att-btn present" onclick="setAtt(this, 'Present')">P</button>
+                        <button class="att-btn absent" onclick="setAtt(this, 'Absent')">A</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function setAtt(btn, status) {
+            let parent = btn.parentElement;
+            parent.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function saveAttendance() {
+            let date = document.getElementById('attendanceDate').value;
+            let cls = document.getElementById('attClassSelect').value;
+            let rows = document.querySelectorAll('#attendanceSheet .att-row');
+            
+            // Remove previous entries for this date/class to avoid duplicates
+            db.attendance = db.attendance.filter(a => !(a.date === date && a.className === cls));
+
+            rows.forEach(row => {
+                let name = row.getAttribute('data-name');
+                let activeBtn = row.querySelector('.att-btn.active');
+                if(activeBtn) {
+                    db.attendance.push({ date, className: cls, student: name, status: activeBtn.innerText === 'P' ? 'Present' : 'Absent' });
+                }
+            });
+            save();
+            alert("Attendance Saved!");
+        }
+
+        function loadFeeStudents() {
+            let cls = document.getElementById('feeClassSelect').value;
+            document.getElementById('feeStudentSelect').innerHTML = (db.students[cls] || []).map(s => `<option>${s}</option>`).join('');
+        }
+
+        function recordPayment() {
+            let cls = document.getElementById('feeClassSelect').value;
+            let name = document.getElementById('feeStudentSelect').value;
+            let amt = document.getElementById('payAmount').value;
+            if(amt) {
+                db.payments.push({ className: cls, student: name, amount: parseFloat(amt), date: new Date().toISOString().split('T')[0] });
+                save();
+                alert("Payment Recorded!");
+            }
+        }
+
+        // UPDATED ATTENDANCE HISTORY: CALENDAR + CLASS FILTER
+        function showDailyAttendanceReport() {
+            let date = document.getElementById('histAttDate').value;
+            let cls = document.getElementById('histAttClassSelect').value;
+            let tbody = document.querySelector('#attHistTable tbody');
+            tbody.innerHTML = '';
+
+            if(!cls || !date) return;
+
+            let studentsInClass = (db.students[cls] || []).sort();
+            
+            studentsInClass.forEach(s => {
+                let record = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
+                let statusText = "Not Marked";
+                let statusClass = "status-none";
+
+                if (record) {
+                    statusText = record.status;
+                    statusClass = record.status === 'Present' ? 'status-present' : 'status-absent';
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showFullPaymentReport() {
+            let cls = document.getElementById('histPayClassSelect').value;
+            let studentsInClass = (db.students[cls] || []).sort();
+            document.querySelector('#payHistTable tbody').innerHTML = studentsInClass.map(s => {
+                let sPays = db.payments.filter(p => p.student === s && p.className === cls);
+                let total = sPays.reduce((sum, p) => sum + p.amount, 0);
+                let last = sPays.length ? sPays.sort((a,b) => new Date(b.date)-new Date(a.date))[0].date : "-";
+                return `<tr><td>${s}</td><td>₹${total}</td><td>${last}</td></tr>`;
+            }).join('');
+        }
+
+        function refreshDropdowns() {
+            let options = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+            ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
+                document.getElementById(id).innerHTML = options;
+            });
+        }
+
+        function save() {
+            localStorage.setItem('sc_classes', JSON.stringify(db.classes));
+            localStorage.setItem('sc_students', JSON.stringify(db.students));
+            localStorage.setItem('sc_payments', JSON.stringify(db.payments));
+            localStorage.setItem('sc_attendance', JSON.stringify(db.attendance));
+        }
+
+        function downloadPayPDF() {
+            html2pdf().from(document.getElementById('payReportArea')).save('Payment_Report.pdf');
+        }
+    </script>
+</body>
+</html>
