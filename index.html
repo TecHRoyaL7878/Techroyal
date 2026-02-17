@@ -407,21 +407,25 @@
         }
 
         function sendToGoogleSheets(dataType, dataPayload) {
-            updateSyncUI('syncing');
-            const formData = new URLSearchParams();
-            formData.append('type', dataType); 
-            for (const key in dataPayload) { formData.append(key, dataPayload[key]); }
+    updateSyncUI('syncing');
+    const formData = new URLSearchParams();
+    formData.append('type', dataType); 
+    
+    // This loops through your data (like className) and attaches it for Google to read
+    for (const key in dataPayload) {
+        formData.append(key, dataPayload[key]);
+    }
 
-            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-            .then(() => {
-                console.log('Data synced: ' + dataType);
-                updateSyncUI('sync-success');
-            })
-            .catch(error => {
-                console.error('Sync Error:', error);
-                updateSyncUI('sync-error');
-            });
-        }
+    fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+    .then(() => {
+        console.log('Data synced: ' + dataType);
+        updateSyncUI('sync-success');
+    })
+    .catch(error => {
+        console.error('Sync Error:', error);
+        updateSyncUI('sync-error');
+    });
+}
     </script>
 </body>
 </html>
