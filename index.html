@@ -237,6 +237,8 @@
                 save();
                 renderStudentsList();
                 document.getElementById('studentName').value = '';
+                // Add this line after db.students[cls].push(name);
+                sendToGoogleSheets('New Student', { className: cls, studentName: name });
             }
         }
 
@@ -291,6 +293,8 @@
             rows.forEach(row => {
                 let name = row.getAttribute('data-name');
                 let activeBtn = row.querySelector('.att-btn.active');
+                // Add this inside the if(activeBtn) block
+                sendToGoogleSheets('Attendance', { date: date, className: cls, student: name, status: activeBtn.innerText });
                 if(activeBtn) {
                     db.attendance.push({ date, className: cls, student: name, status: activeBtn.innerText === 'P' ? 'Present' : 'Absent' });
                 }
@@ -312,6 +316,8 @@
                 db.payments.push({ className: cls, student: name, amount: parseFloat(amt), date: new Date().toISOString().split('T')[0] });
                 save();
                 alert("Payment Recorded!");
+                // Add this line after db.payments.push(...)
+                sendToGoogleSheets('Payment', { className: cls, student: name, amount: amt, date: new Date().toLocaleDateString() });
             }
         }
 
@@ -374,5 +380,28 @@
             html2pdf().from(document.getElementById('payReportArea')).save('Payment_Report.pdf');
         }
     </script>
+    <script>
+    // THE BRIDGE: This sends your local data to Google Sheets
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbycwEMzAi8UOei3a7oPzhzTgBPjA-cc4h4PedQ9E1qVxwz1zMhzoa2P6whaEkBw8Ysl2w/exec';
+
+    function sendToGoogleSheets(dataType, dataPayload) {
+        // Create a form-style body
+        const formData = new URLSearchParams();
+        formData.append('type', dataType); // Tells the sheet if it's Attendance, Student, etc.
+        
+        // Flatten the data object into the form
+        for (const key in dataPayload) {
+            formData.append(key, dataPayload[key]);
+        }
+
+        fetch(scriptURL, { 
+            method: 'POST', 
+            body: formData,
+            mode: 'no-cors' // This prevents errors from GitHub's security
+        })
+        .then(() => console.log('Data synced to Google Sheets'))
+        .catch(error => console.error('Sync Error:', error));
+    }
+</script>
 </body>
 </html>
