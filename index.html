@@ -26,8 +26,20 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
             align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
         }
+        
+        /* Layout for Clock and Sync Button */
+        .clock-area { display: flex; align-items: center; gap: 15px; }
         .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
         
+        /* Refresh Button Style */
+        .refresh-btn {
+            background: #667eea; color: white; border: none; border-radius: 50%;
+            width: 40px; height: 40px; cursor: pointer; font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;
+        }
+        .refresh-btn:active { transform: scale(0.9); }
+
         #syncStatus {
             position: absolute; top: 10px; right: 20px; font-size: 12px;
             padding: 5px 12px; border-radius: 20px; background: #f3f4f6;
@@ -95,7 +107,10 @@
                 <div id="syncStatus" class="">
                     <span class="sync-dot"></span> <span id="syncText">Cloud Idle</span>
                 </div>
-                <div class="clock" id="clock">00:00:00</div>
+                <div class="clock-area">
+                    <div class="clock" id="clock">00:00:00</div>
+                    <button class="refresh-btn" onclick="fetchCloudData()" title="Sync with Cloud">🔄</button>
+                </div>
                 <div id="currentDate"></div>
             </div>
 
@@ -185,15 +200,38 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
-        // YOUR APP SCRIPT URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
+        // Updated Login Logic
         function login() {
             if(document.getElementById('usernameInput').value) {
                 document.getElementById('loginPage').style.display='none';
                 document.getElementById('mainApp').style.display='block';
                 init();
+                fetchCloudData(); // Auto-fetch when logging in
             }
+        }
+
+        // Updated Cloud Fetch Logic
+        function fetchCloudData() {
+            updateSyncUI('syncing');
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(cloudData => {
+                    if (cloudData.classes) {
+                        db.classes = cloudData.classes;
+                        db.students = cloudData.students;
+                        save(); 
+                        refreshDropdowns();
+                        renderClasses();
+                        updateSyncUI('sync-success');
+                        console.log("Cloud data synced successfully");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching cloud data:', error);
+                    updateSyncUI('sync-error');
+                });
         }
 
         function init() {
@@ -221,6 +259,8 @@
                 db.classes.push(name);
                 db.students[name] = [];
                 save(); renderClasses(); refreshDropdowns();
+                // Send new class to cloud
+                sendToGoogleSheets('New Class', { className: name });
                 document.getElementById('newClassName').value = '';
             }
         }
@@ -296,7 +336,6 @@
             save(); alert("Attendance Saved & Syncing!");
         }
 
-        // --- FIXED FEE STUDENT DROPDOWN ---
         function loadFeeStudents() {
             let cls = document.getElementById('feeClassSelect').value;
             let students = db.students[cls] || [];
