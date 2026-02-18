@@ -14,7 +14,6 @@
         }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        /* Institution Name Styling */
         .inst-name {
             text-align: center; color: white; font-size: 2.5em; font-weight: 800;
             margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
@@ -27,11 +26,9 @@
             align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
         }
         
-        /* Layout for Clock and Sync Button */
         .clock-area { display: flex; align-items: center; gap: 15px; }
         .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
         
-        /* Refresh Button Style */
         .refresh-btn {
             background: #667eea; color: white; border: none; border-radius: 50%;
             width: 40px; height: 40px; cursor: pointer; font-size: 20px;
@@ -182,7 +179,7 @@
                     <h2>📊 Payment History</h2>
                     <select id="histPayClassSelect" onchange="showFullPaymentReport()"></select>
                     <table id="payHistTable">
-                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -202,17 +199,15 @@
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
-        // Updated Login Logic
         function login() {
             if(document.getElementById('usernameInput').value) {
                 document.getElementById('loginPage').style.display='none';
                 document.getElementById('mainApp').style.display='block';
                 init();
-                fetchCloudData(); // Auto-fetch when logging in
+                fetchCloudData();
             }
         }
 
-        // Updated Cloud Fetch Logic
         function fetchCloudData() {
             updateSyncUI('syncing');
             fetch(scriptURL)
@@ -221,15 +216,16 @@
                     if (cloudData.classes) {
                         db.classes = cloudData.classes;
                         db.students = cloudData.students;
+                        db.attendance = cloudData.attendance || [];
+                        db.payments = cloudData.payments || [];
                         save(); 
                         refreshDropdowns();
                         renderClasses();
+                        showFullPaymentReport();
                         updateSyncUI('sync-success');
-                        console.log("Cloud data synced successfully");
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching cloud data:', error);
                     updateSyncUI('sync-error');
                 });
         }
@@ -250,7 +246,7 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
         }
 
         function addClass() {
@@ -259,7 +255,6 @@
                 db.classes.push(name);
                 db.students[name] = [];
                 save(); renderClasses(); refreshDropdowns();
-                // Send new class to cloud
                 sendToGoogleSheets('New Class', { className: name });
                 document.getElementById('newClassName').value = '';
             }
@@ -357,9 +352,36 @@
                 alert("Payment Recorded!");
                 document.getElementById('payAmount').value = '';
                 document.getElementById('payDesc').value = '';
+                showFullPaymentReport();
             } else {
                 alert("Please fill Class, Student and Amount.");
             }
+        }
+
+        function deletePayment(index) {
+            if(confirm("Delete this payment record from the app?")) {
+                db.payments.splice(index, 1);
+                save();
+                showFullPaymentReport();
+            }
+        }
+
+        function showFullPaymentReport() {
+            let cls = document.getElementById('histPayClassSelect').value;
+            let tbody = document.querySelector('#payHistTable tbody');
+            tbody.innerHTML = '';
+            db.payments.forEach((p, index) => {
+                if(p.className === cls || cls === "") {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${p.student}</td>
+                            <td>${p.description}</td>
+                            <td>₹${p.amount}</td>
+                            <td>${p.date}</td>
+                            <td><button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deletePayment(${index})">Delete</button></td>
+                        </tr>`;
+                }
+            });
         }
 
         function showDailyAttendanceReport() {
@@ -375,18 +397,10 @@
             });
         }
 
-        function showFullPaymentReport() {
-            let cls = document.getElementById('histPayClassSelect').value;
-            let filtered = db.payments.filter(p => p.className === cls);
-            document.querySelector('#payHistTable tbody').innerHTML = filtered.map(p => `
-                <tr><td>${p.student}</td><td>${p.description}</td><td>₹${p.amount}</td><td>${p.date}</td></tr>
-            `).join('');
-        }
-
         function refreshDropdowns() {
             let opts = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
             ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
-                document.getElementById(id).innerHTML = opts;
+                if(document.getElementById(id)) document.getElementById(id).innerHTML = opts;
             });
         }
 
@@ -402,9 +416,9 @@
         function updateSyncUI(status) {
             const el = document.getElementById('syncStatus');
             const txt = document.getElementById('syncText');
-            el.className = status;
-            txt.innerText = status === 'syncing' ? 'Syncing...' : (status === 'sync-success' ? 'Cloud Success' : 'Cloud Idle');
-            setTimeout(() => { if(status !== 'syncing') el.className = ''; }, 2000);
+            if(el) el.className = status;
+            if(txt) txt.innerText = status === 'syncing' ? 'Syncing...' : (status === 'sync-success' ? 'Cloud Success' : 'Cloud Idle');
+            setTimeout(() => { if(status !== 'syncing' && el) el.className = ''; }, 2000);
         }
 
         function sendToGoogleSheets(type, data) {
