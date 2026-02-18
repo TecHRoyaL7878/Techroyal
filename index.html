@@ -13,33 +13,24 @@
             min-height: 100vh; color: #333;
         }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        
-        /* Institution Name Styling */
         .inst-name {
             text-align: center; color: white; font-size: 2.5em; font-weight: 800;
             margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
             letter-spacing: 2px;
         }
-
         .header { 
             background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
             align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
         }
-        
-        /* Layout for Clock and Sync Button */
         .clock-area { display: flex; align-items: center; gap: 15px; }
         .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
-        
-        /* Refresh Button Style */
         .refresh-btn {
             background: #667eea; color: white; border: none; border-radius: 50%;
             width: 40px; height: 40px; cursor: pointer; font-size: 20px;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;
         }
-        .refresh-btn:active { transform: scale(0.9); }
-
         #syncStatus {
             position: absolute; top: 10px; right: 20px; font-size: 12px;
             padding: 5px 12px; border-radius: 20px; background: #f3f4f6;
@@ -48,42 +39,28 @@
         .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #9ca3af; }
         .syncing .sync-dot { background: #3b82f6; animation: pulse 1s infinite; }
         .sync-success .sync-dot { background: #10b981; }
-
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        #loginPage { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
-            align-items: center; justify-content: center;
-        }
+        #loginPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; }
-        
         .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; }
         .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; }
         .tab-btn.active { background: #667eea; color: white; }
-
         .tab-content { display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 60vh; }
         .tab-content.active { display: block; }
-
-        .form-group { margin-bottom: 20px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
-        
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; font-weight: bold; }
         .btn-primary { background: #667eea; color: white; }
-        .btn-danger { background: #ef4444; color: white; padding: 8px 15px; font-size: 14px; }
+        .btn-danger { background: #ef4444; color: white; padding: 8px 15px; font-size: 12px; }
         .btn-success { background: #10b981; color: white; }
-
         .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
         .att-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
         .att-btns { display: flex; gap: 10px; }
         .att-btn { padding: 8px 15px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; }
         .att-btn.present.active { background: #10b981; color: white; border-color: #10b981; }
         .att-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
-
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; }
         th { background: #667eea; color: white; }
-
         .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 14px; }
         .status-present { background: #d1fae5; color: #065f46; }
         .status-absent { background: #fee2e2; color: #991b1b; }
@@ -95,7 +72,7 @@
         <div class="login-box">
             <h2>🏫 GREAT LEARNERS</h2>
             <input type="text" id="usernameInput" placeholder="Username">
-            <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+            <button class="btn btn-primary" style="width:100%; margin-top:10px" onclick="login()">Login & Sync</button>
         </div>
     </div>
 
@@ -104,14 +81,14 @@
             <h1 class="inst-name">GREAT LEARNERS</h1>
             
             <div class="header">
-                <div id="syncStatus" class="">
+                <div id="syncStatus">
                     <span class="sync-dot"></span> <span id="syncText">Cloud Idle</span>
                 </div>
                 <div class="clock-area">
                     <div class="clock" id="clock">00:00:00</div>
-                    <button class="refresh-btn" onclick="fetchCloudData()" title="Sync with Cloud">🔄</button>
+                    <button class="refresh-btn" onclick="fetchCloudData()" title="Sync Everything">🔄</button>
                 </div>
-                <div id="currentDate"></div>
+                <div id="currentDate" style="font-weight: bold; color: #667eea;"></div>
             </div>
 
             <div class="tabs">
@@ -125,54 +102,42 @@
 
             <div id="classes" class="tab-content active">
                 <h2>Manage Classes</h2>
-                <div class="form-group">
-                    <input type="text" id="newClassName" placeholder="Class Name">
-                    <button class="btn btn-primary" onclick="addClass()">Add Class</button>
-                </div>
-                <div id="classesList" class="list-container"></div>
+                <input type="text" id="newClassName" placeholder="Class Name">
+                <button class="btn btn-primary" style="margin-top:10px" onclick="addClass()">Add Class</button>
+                <div id="classesList" class="list-container" style="margin-top:20px"></div>
             </div>
 
             <div id="students" class="tab-content">
                 <h2>Manage Students</h2>
                 <select id="classSelect" onchange="renderStudentsList()"></select>
-                <div class="form-group" style="margin-top:15px">
-                    <input type="text" id="studentName" placeholder="Student Name">
-                    <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
-                </div>
-                <div id="studentsList" class="list-container"></div>
+                <input type="text" id="studentName" placeholder="Student Name" style="margin-top:10px">
+                <button class="btn btn-primary" style="margin-top:10px" onclick="addStudent()">Add Student</button>
+                <div id="studentsList" class="list-container" style="margin-top:20px"></div>
             </div>
 
             <div id="attendance" class="tab-content">
                 <h2>Mark Attendance</h2>
-                <div class="form-group">
-                    <label>Date:</label>
-                    <input type="date" id="attendanceDate">
-                    <label>Class:</label>
-                    <select id="attClassSelect" onchange="loadAttendanceSheet()"></select>
-                </div>
-                <div id="attendanceSheet" class="list-container"></div>
-                <button class="btn btn-success" style="margin-top:20px; width:100%" onclick="saveAttendance()">✅ Save Attendance</button>
+                <input type="date" id="attendanceDate">
+                <select id="attClassSelect" onchange="loadAttendanceSheet()" style="margin-top:10px"></select>
+                <div id="attendanceSheet" class="list-container" style="margin-top:20px"></div>
+                <button class="btn btn-success" style="margin-top:20px; width:100%" onclick="saveAttendance()">✅ Save & Sync</button>
             </div>
 
             <div id="fees" class="tab-content">
                 <h2>Record Payment</h2>
-                <label>Select Class:</label>
                 <select id="feeClassSelect" onchange="loadFeeStudents()"></select>
-                <label style="margin-top:10px; display:block;">Select Student:</label>
-                <select id="feeStudentSelect"></select>
-                <label style="margin-top:10px; display:block;">Amount (₹):</label>
-                <input type="number" id="payAmount" placeholder="Amount ₹">
-                <label style="margin-top:10px; display:block;">Description:</label>
-                <input type="text" id="payDesc" placeholder="e.g. Monthly Fee, Tournament, Uniform">
+                <select id="feeStudentSelect" style="margin-top:10px"></select>
+                <input type="number" id="payAmount" placeholder="Amount ₹" style="margin-top:10px">
+                <input type="text" id="payDesc" placeholder="Description (e.g. Monthly, Tournament)" style="margin-top:10px">
                 <button class="btn btn-success" style="width:100%; margin-top:20px" onclick="recordPayment()">Record Fee & Sync</button>
             </div>
 
             <div id="att-history" class="tab-content">
                 <h2>📅 Attendance History</h2>
                 <input type="date" id="histAttDate" onchange="showDailyAttendanceReport()">
-                <select id="histAttClassSelect" onchange="showDailyAttendanceReport()"></select>
+                <select id="histAttClassSelect" onchange="showDailyAttendanceReport()" style="margin-top:10px"></select>
                 <table id="attHistTable">
-                    <thead><tr><th>Student Name</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Student</th><th>Status</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -182,13 +147,12 @@
                     <h2>📊 Payment History</h2>
                     <select id="histPayClassSelect" onchange="showFullPaymentReport()"></select>
                     <table id="payHistTable">
-                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th></tr></thead>
+                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:10px">Download PDF Report</button>
+                <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:10px">Download PDF</button>
             </div>
-
         </div>
     </div>
 
@@ -202,36 +166,13 @@
 
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
-        // Updated Login Logic
         function login() {
             if(document.getElementById('usernameInput').value) {
                 document.getElementById('loginPage').style.display='none';
                 document.getElementById('mainApp').style.display='block';
                 init();
-                fetchCloudData(); // Auto-fetch when logging in
+                fetchCloudData();
             }
-        }
-
-        // Updated Cloud Fetch Logic
-        function fetchCloudData() {
-            updateSyncUI('syncing');
-            fetch(scriptURL)
-                .then(response => response.json())
-                .then(cloudData => {
-                    if (cloudData.classes) {
-                        db.classes = cloudData.classes;
-                        db.students = cloudData.students;
-                        save(); 
-                        refreshDropdowns();
-                        renderClasses();
-                        updateSyncUI('sync-success');
-                        console.log("Cloud data synced successfully");
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching cloud data:', error);
-                    updateSyncUI('sync-error');
-                });
         }
 
         function init() {
@@ -244,13 +185,32 @@
             renderClasses();
         }
 
-        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
+        function fetchCloudData() {
+            updateSyncUI('syncing');
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(cloudData => {
+                    db.classes = cloudData.classes || [];
+                    db.students = cloudData.students || {};
+                    db.attendance = cloudData.attendance || [];
+                    db.payments = cloudData.payments || [];
+                    save(); 
+                    refreshDropdowns();
+                    renderClasses();
+                    showFullPaymentReport();
+                    updateSyncUI('sync-success');
+                })
+                .catch(err => updateSyncUI('sync-error'));
+        }
 
-        function switchTab(id) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.target.classList.add('active');
+        function sendToGoogleSheets(type, data) {
+            updateSyncUI('syncing');
+            const formData = new URLSearchParams();
+            formData.append('type', type);
+            for (const key in data) formData.append(key, data[key]);
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+            .then(() => updateSyncUI('sync-success'))
+            .catch(() => updateSyncUI('sync-error'));
         }
 
         function addClass() {
@@ -259,16 +219,9 @@
                 db.classes.push(name);
                 db.students[name] = [];
                 save(); renderClasses(); refreshDropdowns();
-                // Send new class to cloud
                 sendToGoogleSheets('New Class', { className: name });
                 document.getElementById('newClassName').value = '';
             }
-        }
-
-        function renderClasses() {
-            document.getElementById('classesList').innerHTML = db.classes.map(c => `
-                <div class="att-row"><span><b>${c}</b></span>
-                <button class="btn btn-danger" onclick="deleteClass('${c}')">Delete</button></div>`).join('');
         }
 
         function deleteClass(className) {
@@ -290,57 +243,17 @@
             }
         }
 
-        function renderStudentsList() {
-            let cls = document.getElementById('classSelect').value;
-            document.getElementById('studentsList').innerHTML = (db.students[cls] || []).map(s => `
-                <div class="att-row"><span>${s}</span><button class="btn btn-danger" onclick="deleteStudent('${s}')">Delete</button></div>`).join('');
-        }
-
         function deleteStudent(studentName) {
             let cls = document.getElementById('classSelect').value;
             db.students[cls] = db.students[cls].filter(s => s !== studentName);
             save(); renderStudentsList();
         }
 
-        function loadAttendanceSheet() {
-            let cls = document.getElementById('attClassSelect').value;
-            let list = db.students[cls] || [];
-            document.getElementById('attendanceSheet').innerHTML = list.map(s => `
-                <div class="att-row" data-name="${s}"><span>${s}</span>
-                <div class="att-btns">
-                    <button class="att-btn present" onclick="setAtt(this, 'Present')">P</button>
-                    <button class="att-btn absent" onclick="setAtt(this, 'Absent')">A</button>
-                </div></div>`).join('');
-        }
-
-        function setAtt(btn, status) {
-            btn.parentElement.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function saveAttendance() {
-            let date = document.getElementById('attendanceDate').value;
-            let cls = document.getElementById('attClassSelect').value;
-            let rows = document.querySelectorAll('#attendanceSheet .att-row');
-            if(!cls) return alert("Select a class");
-
-            rows.forEach(row => {
-                let name = row.getAttribute('data-name');
-                let activeBtn = row.querySelector('.att-btn.active');
-                if(activeBtn) {
-                    let statusValue = activeBtn.innerText === 'P' ? 'Present' : 'Absent';
-                    db.attendance.push({ date, className: cls, student: name, status: statusValue });
-                    sendToGoogleSheets('Attendance', { date, className: cls, student: name, status: statusValue });
-                }
-            });
-            save(); alert("Attendance Saved & Syncing!");
-        }
-
         function loadFeeStudents() {
             let cls = document.getElementById('feeClassSelect').value;
             let students = db.students[cls] || [];
-            let select = document.getElementById('feeStudentSelect');
-            select.innerHTML = '<option value="">Select Student</option>' + students.map(s => `<option value="${s}">${s}</option>`).join('');
+            document.getElementById('feeStudentSelect').innerHTML = 
+                '<option value="">Select Student</option>' + students.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
         function recordPayment() {
@@ -348,75 +261,113 @@
             let name = document.getElementById('feeStudentSelect').value;
             let amt = document.getElementById('payAmount').value;
             let desc = document.getElementById('payDesc').value || "Fee Payment";
-            let today = new Date().toISOString().split('T')[0];
+            let date = new Date().toISOString().split('T')[0];
 
-            if(amt && name && cls) {
-                db.payments.push({ className: cls, student: name, amount: amt, description: desc, date: today });
+            if(amt && name) {
+                db.payments.push({ className: cls, student: name, amount: amt, description: desc, date: date });
                 save();
-                sendToGoogleSheets('Payment', { className: cls, student: name, amount: amt, description: desc, date: today });
-                alert("Payment Recorded!");
+                sendToGoogleSheets('Payment', { className: cls, student: name, amount: amt, description: desc, date: date });
+                alert("Payment Synced!");
                 document.getElementById('payAmount').value = '';
                 document.getElementById('payDesc').value = '';
-            } else {
-                alert("Please fill Class, Student and Amount.");
+                showFullPaymentReport();
             }
         }
 
-        function showDailyAttendanceReport() {
-            let date = document.getElementById('histAttDate').value;
-            let cls = document.getElementById('histAttClassSelect').value;
-            let tbody = document.querySelector('#attHistTable tbody');
-            tbody.innerHTML = '';
-            (db.students[cls] || []).forEach(s => {
-                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
-                let text = rec ? rec.status : "Not Marked";
-                let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
-                tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${badge}">${text}</span></td></tr>`;
-            });
+        function deletePayment(index) {
+            if(confirm("Delete this record from phone?")) {
+                db.payments.splice(index, 1);
+                save();
+                showFullPaymentReport();
+            }
         }
 
         function showFullPaymentReport() {
             let cls = document.getElementById('histPayClassSelect').value;
-            let filtered = db.payments.filter(p => p.className === cls);
-            document.querySelector('#payHistTable tbody').innerHTML = filtered.map(p => `
-                <tr><td>${p.student}</td><td>${p.description}</td><td>₹${p.amount}</td><td>${p.date}</td></tr>
-            `).join('');
-        }
-
-        function refreshDropdowns() {
-            let opts = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
-            ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
-                document.getElementById(id).innerHTML = opts;
+            let tbody = document.querySelector('#payHistTable tbody');
+            tbody.innerHTML = '';
+            db.payments.forEach((p, index) => {
+                if(p.className === cls || cls === "") {
+                    tbody.innerHTML += `<tr><td>${p.student}</td><td>${p.description}</td><td>₹${p.amount}</td><td>${p.date}</td>
+                    <td><button class="btn btn-danger" onclick="deletePayment(${index})">Delete</button></td></tr>`;
+                }
             });
         }
 
+        function saveAttendance() {
+            let date = document.getElementById('attendanceDate').value;
+            let cls = document.getElementById('attClassSelect').value;
+            document.querySelectorAll('#attendanceSheet .att-row').forEach(row => {
+                let name = row.getAttribute('data-name');
+                let activeBtn = row.querySelector('.att-btn.active');
+                if(activeBtn) {
+                    let status = activeBtn.innerText === 'P' ? 'Present' : 'Absent';
+                    db.attendance.push({ date, className: cls, student: name, status });
+                    sendToGoogleSheets('Attendance', { date, className: cls, student: name, status });
+                }
+            });
+            save(); alert("Attendance Synced!");
+        }
+
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
         function save() {
             localStorage.setItem('sc_classes', JSON.stringify(db.classes));
             localStorage.setItem('sc_students', JSON.stringify(db.students));
             localStorage.setItem('sc_payments', JSON.stringify(db.payments));
             localStorage.setItem('sc_attendance', JSON.stringify(db.attendance));
         }
-
-        function downloadPayPDF() { html2pdf().from(document.getElementById('payReportArea')).save('Fees_Report.pdf'); }
-
+        function refreshDropdowns() {
+            let opts = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+            ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
+                if(document.getElementById(id)) document.getElementById(id).innerHTML = opts;
+            });
+        }
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+        function renderClasses() {
+            document.getElementById('classesList').innerHTML = db.classes.map(c => `
+                <div class="att-row"><span><b>${c}</b></span>
+                <button class="btn btn-danger" onclick="deleteClass('${c}')">Delete</button></div>`).join('');
+        }
+        function renderStudentsList() {
+            let cls = document.getElementById('classSelect').value;
+            document.getElementById('studentsList').innerHTML = (db.students[cls] || []).map(s => `
+                <div class="att-row"><span>${s}</span>
+                <button class="btn btn-danger" onclick="deleteStudent('${s}')">Delete</button></div>`).join('');
+        }
+        function loadAttendanceSheet() {
+            let cls = document.getElementById('attClassSelect').value;
+            document.getElementById('attendanceSheet').innerHTML = (db.students[cls] || []).map(s => `
+                <div class="att-row" data-name="${s}"><span>${s}</span>
+                <div class="att-btns"><button class="att-btn present" onclick="setAtt(this)">P</button>
+                <button class="att-btn absent" onclick="setAtt(this)">A</button></div></div>`).join('');
+        }
+        function setAtt(btn) {
+            btn.parentElement.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        function showDailyAttendanceReport() {
+            let date = document.getElementById('histAttDate').value;
+            let cls = document.getElementById('histAttClassSelect').value;
+            let tbody = document.querySelector('#attHistTable tbody');
+            tbody.innerHTML = (db.students[cls] || []).map(s => {
+                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
+                let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
+                return `<tr><td>${s}</td><td><span class="status-badge ${badge}">${rec ? rec.status : 'No Data'}</span></td></tr>`;
+            }).join('');
+        }
         function updateSyncUI(status) {
             const el = document.getElementById('syncStatus');
             const txt = document.getElementById('syncText');
-            el.className = status;
-            txt.innerText = status === 'syncing' ? 'Syncing...' : (status === 'sync-success' ? 'Cloud Success' : 'Cloud Idle');
-            setTimeout(() => { if(status !== 'syncing') el.className = ''; }, 2000);
+            if(txt) txt.innerText = status === 'syncing' ? 'Syncing...' : (status === 'sync-success' ? 'Cloud Success' : 'Cloud Idle');
+            if(el) el.className = status;
+            setTimeout(() => { if(status !== 'syncing' && el) el.className = ''; }, 2000);
         }
-
-        function sendToGoogleSheets(type, data) {
-            updateSyncUI('syncing');
-            const formData = new URLSearchParams();
-            formData.append('type', type);
-            for (const key in data) formData.append(key, data[key]);
-
-            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-            .then(() => updateSyncUI('sync-success'))
-            .catch(() => updateSyncUI('sync-error'));
-        }
+        function downloadPayPDF() { html2pdf().from(document.getElementById('payReportArea')).save('Report.pdf'); }
     </script>
 </body>
 </html>
