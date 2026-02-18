@@ -61,12 +61,17 @@
         .tab-content { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 50vh; }
         .tab-content.active { display: block; }
 
+        /* SLIDER TABLE CONTAINER */
         .table-responsive {
-            width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
-            margin-top: 15px; border-radius: 10px; border: 1px solid #e1e5e9;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
         }
 
-        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; } /* Ensures sliding on mobile */
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; font-size: 14px; }
         th { background: #f8fafc; color: #667eea; font-weight: 700; }
 
@@ -198,7 +203,6 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
-        // MAKE SURE THIS URL MATCHES YOUR LATEST DEPLOYMENT
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
         function login() {
@@ -224,7 +228,6 @@
                         refreshDropdowns();
                         renderClasses();
                         showFullPaymentReport();
-                        showDailyAttendanceReport(); // Refresh history view after sync
                         updateSyncUI('sync-success');
                     }
                 })
@@ -376,28 +379,15 @@
         }
 
         function showDailyAttendanceReport() {
-            let dateInput = document.getElementById('histAttDate').value;
+            let date = document.getElementById('histAttDate').value;
             let cls = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
-            if(!tbody) return;
             tbody.innerHTML = '';
-            if(!cls) return;
-
             (db.students[cls] || []).forEach(s => {
-                // ROBUST MATCHING: Trims spaces and forces string comparison
-                let rec = db.attendance.find(a => 
-                    String(a.student).trim() === String(s).trim() && 
-                    String(a.className).trim() === String(cls).trim() && 
-                    String(a.date).trim() === String(dateInput).trim()
-                );
-
+                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
                 let text = rec ? rec.status : "Not Marked";
                 let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
-                
-                tbody.innerHTML += `<tr>
-                    <td>${s}</td>
-                    <td><span class="status-badge ${badge}">${text}</span></td>
-                </tr>`;
+                tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${badge}">${text}</span></td></tr>`;
             });
         }
 
