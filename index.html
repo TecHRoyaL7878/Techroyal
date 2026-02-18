@@ -12,12 +12,12 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh; color: #333;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
         
         .inst-name {
-            text-align: center; color: white; font-size: 2.5em; font-weight: 800;
+            text-align: center; color: white; font-size: 2em; font-weight: 800;
             margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .header { 
@@ -26,23 +26,21 @@
             align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
         }
         
-        .clock-area { display: flex; align-items: center; gap: 15px; }
-        .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
+        .clock-area { display: flex; align-items: center; gap: 10px; }
+        .clock { font-size: 1.8em; font-weight: bold; color: #667eea; }
         
         .refresh-btn {
             background: #667eea; color: white; border: none; border-radius: 50%;
-            width: 40px; height: 40px; cursor: pointer; font-size: 20px;
+            width: 35px; height: 35px; cursor: pointer; font-size: 18px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;
         }
-        .refresh-btn:active { transform: scale(0.9); }
 
         #syncStatus {
-            position: absolute; top: 10px; right: 20px; font-size: 12px;
-            padding: 5px 12px; border-radius: 20px; background: #f3f4f6;
+            position: absolute; top: 10px; right: 10px; font-size: 10px;
+            padding: 4px 10px; border-radius: 20px; background: #f3f4f6;
             display: flex; align-items: center; gap: 5px; font-weight: bold;
         }
-        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #9ca3af; }
+        .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #9ca3af; }
         .syncing .sync-dot { background: #3b82f6; animation: pulse 1s infinite; }
         .sync-success .sync-dot { background: #10b981; }
 
@@ -51,37 +49,47 @@
         #loginPage { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
-            align-items: center; justify-content: center;
+            align-items: center; justify-content: center; padding: 20px;
         }
-        .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; }
+        .login-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 400px; }
         
-        .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; }
-        .tab-btn.active { background: #667eea; color: white; }
+        .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { flex: 1; padding: 12px 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; font-size: 14px; }
+        .tab-btn.active { background: #667eea; color: white; font-weight: bold; }
 
-        .tab-content { display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 60vh; }
+        .tab-content { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 50vh; }
         .tab-content.active { display: block; }
 
-        .form-group { margin-bottom: 20px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
+        /* SLIDER TABLE CONTAINER */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 500px; } /* Ensures sliding on mobile */
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; font-size: 14px; }
+        th { background: #f8fafc; color: #667eea; font-weight: 700; }
+
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px; appearance: none; }
         
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; transition: 0.3s; font-weight: bold; }
         .btn-primary { background: #667eea; color: white; }
-        .btn-danger { background: #ef4444; color: white; padding: 8px 15px; font-size: 14px; }
+        .btn-danger { background: #ef4444; color: white; padding: 6px 12px; font-size: 12px; }
         .btn-success { background: #10b981; color: white; }
 
-        .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
-        .att-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
-        .att-btns { display: flex; gap: 10px; }
-        .att-btn { padding: 8px 15px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; }
+        .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 5px; }
+        .att-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        .att-btns { display: flex; gap: 5px; }
+        .att-btn { padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; font-weight: bold; }
         .att-btn.present.active { background: #10b981; color: white; border-color: #10b981; }
         .att-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; }
-        th { background: #667eea; color: white; }
-
-        .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 14px; }
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
         .status-present { background: #d1fae5; color: #065f46; }
         .status-absent { background: #fee2e2; color: #991b1b; }
     </style>
@@ -92,7 +100,7 @@
         <div class="login-box">
             <h2>🏫 GREAT LEARNERS</h2>
             <input type="text" id="usernameInput" placeholder="Username">
-            <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+            <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="login()">Login</button>
         </div>
     </div>
 
@@ -106,9 +114,9 @@
                 </div>
                 <div class="clock-area">
                     <div class="clock" id="clock">00:00:00</div>
-                    <button class="refresh-btn" onclick="fetchCloudData()" title="Sync with Cloud">🔄</button>
+                    <button class="refresh-btn" onclick="fetchCloudData()">🔄</button>
                 </div>
-                <div id="currentDate"></div>
+                <div id="currentDate" style="font-size: 14px; color: #666;"></div>
             </div>
 
             <div class="tabs">
@@ -122,30 +130,28 @@
 
             <div id="classes" class="tab-content active">
                 <h2>Manage Classes</h2>
-                <div class="form-group">
+                <div class="form-group" style="display:flex; gap:10px; margin-top:10px;">
                     <input type="text" id="newClassName" placeholder="Class Name">
-                    <button class="btn btn-primary" onclick="addClass()">Add Class</button>
+                    <button class="btn btn-primary" onclick="addClass()">Add</button>
                 </div>
-                <div id="classesList" class="list-container"></div>
+                <div id="classesList" class="list-container" style="margin-top:15px;"></div>
             </div>
 
             <div id="students" class="tab-content">
                 <h2>Manage Students</h2>
                 <select id="classSelect" onchange="renderStudentsList()"></select>
-                <div class="form-group" style="margin-top:15px">
+                <div class="form-group" style="display:flex; gap:10px; margin-top:15px">
                     <input type="text" id="studentName" placeholder="Student Name">
-                    <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+                    <button class="btn btn-primary" onclick="addStudent()">Add</button>
                 </div>
-                <div id="studentsList" class="list-container"></div>
+                <div id="studentsList" class="list-container" style="margin-top:15px;"></div>
             </div>
 
             <div id="attendance" class="tab-content">
                 <h2>Mark Attendance</h2>
                 <div class="form-group">
-                    <label>Date:</label>
                     <input type="date" id="attendanceDate">
-                    <label>Class:</label>
-                    <select id="attClassSelect" onchange="loadAttendanceSheet()"></select>
+                    <select id="attClassSelect" onchange="loadAttendanceSheet()" style="margin-top:10px;"></select>
                 </div>
                 <div id="attendanceSheet" class="list-container"></div>
                 <button class="btn btn-success" style="margin-top:20px; width:100%" onclick="saveAttendance()">✅ Save Attendance</button>
@@ -153,37 +159,37 @@
 
             <div id="fees" class="tab-content">
                 <h2>Record Payment</h2>
-                <label>Select Class:</label>
                 <select id="feeClassSelect" onchange="loadFeeStudents()"></select>
-                <label style="margin-top:10px; display:block;">Select Student:</label>
-                <select id="feeStudentSelect"></select>
-                <label style="margin-top:10px; display:block;">Amount (₹):</label>
-                <input type="number" id="payAmount" placeholder="Amount ₹">
-                <label style="margin-top:10px; display:block;">Description:</label>
-                <input type="text" id="payDesc" placeholder="e.g. Monthly Fee, Tournament, Uniform">
+                <select id="feeStudentSelect" style="margin-top:10px;"></select>
+                <input type="number" id="payAmount" placeholder="Amount ₹" style="margin-top:10px;">
+                <input type="text" id="payDesc" placeholder="Description" style="margin-top:10px;">
                 <button class="btn btn-success" style="width:100%; margin-top:20px" onclick="recordPayment()">Record Fee & Sync</button>
             </div>
 
             <div id="att-history" class="tab-content">
                 <h2>📅 Attendance History</h2>
                 <input type="date" id="histAttDate" onchange="showDailyAttendanceReport()">
-                <select id="histAttClassSelect" onchange="showDailyAttendanceReport()"></select>
-                <table id="attHistTable">
-                    <thead><tr><th>Student Name</th><th>Status</th></tr></thead>
-                    <tbody></tbody>
-                </table>
+                <select id="histAttClassSelect" onchange="showDailyAttendanceReport()" style="margin-top:10px;"></select>
+                <div class="table-responsive">
+                    <table id="attHistTable">
+                        <thead><tr><th>Student</th><th>Status</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
 
             <div id="pay-history" class="tab-content">
                 <div id="payReportArea">
                     <h2>📊 Payment History</h2>
                     <select id="histPayClassSelect" onchange="showFullPaymentReport()"></select>
-                    <table id="payHistTable">
-                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="payHistTable">
+                            <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th><th>Action</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-                <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:10px">Download PDF Report</button>
+                <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:15px; width:100%;">Download PDF Report</button>
             </div>
 
         </div>
@@ -225,9 +231,7 @@
                         updateSyncUI('sync-success');
                     }
                 })
-                .catch(error => {
-                    updateSyncUI('sync-error');
-                });
+                .catch(error => { updateSyncUI('sync-error'); });
         }
 
         function init() {
@@ -246,7 +250,7 @@
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(event && event.target) event.target.classList.add('active');
+            event.target.classList.add('active');
         }
 
         function addClass() {
@@ -353,16 +357,13 @@
                 document.getElementById('payAmount').value = '';
                 document.getElementById('payDesc').value = '';
                 showFullPaymentReport();
-            } else {
-                alert("Please fill Class, Student and Amount.");
-            }
+            } else { alert("Please fill Class, Student and Amount."); }
         }
 
         function deletePayment(index) {
-            if(confirm("Delete this payment record from the app?")) {
+            if(confirm("Delete this record?")) {
                 db.payments.splice(index, 1);
-                save();
-                showFullPaymentReport();
+                save(); showFullPaymentReport();
             }
         }
 
@@ -372,14 +373,7 @@
             tbody.innerHTML = '';
             db.payments.forEach((p, index) => {
                 if(p.className === cls || cls === "") {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${p.student}</td>
-                            <td>${p.description}</td>
-                            <td>₹${p.amount}</td>
-                            <td>${p.date}</td>
-                            <td><button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="deletePayment(${index})">Delete</button></td>
-                        </tr>`;
+                    tbody.innerHTML += `<tr><td>${p.student}</td><td>${p.description}</td><td>₹${p.amount}</td><td>${p.date}</td><td><button class="btn btn-danger" onclick="deletePayment(${index})">Delete</button></td></tr>`;
                 }
             });
         }
@@ -400,7 +394,8 @@
         function refreshDropdowns() {
             let opts = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
             ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
-                if(document.getElementById(id)) document.getElementById(id).innerHTML = opts;
+                let el = document.getElementById(id);
+                if(el) el.innerHTML = opts;
             });
         }
 
@@ -426,7 +421,6 @@
             const formData = new URLSearchParams();
             formData.append('type', type);
             for (const key in data) formData.append(key, data[key]);
-
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
             .then(() => updateSyncUI('sync-success'))
             .catch(() => updateSyncUI('sync-error'));
