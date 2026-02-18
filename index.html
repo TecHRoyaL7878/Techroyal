@@ -6,7 +6,6 @@
     <title>GREAT LEARNERS - School Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* [YOUR EXACT CSS - NO CHANGES MADE] */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -152,7 +151,6 @@
     </div>
 
     <script>
-        // FIXED DATA STRUCTURE FOR SYNCING
         let db = {
             classes: JSON.parse(localStorage.getItem('sc_classes')) || [],
             students: JSON.parse(localStorage.getItem('sc_students')) || {},
@@ -160,7 +158,7 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
+        const scriptURL = 'YOUR_DEPLOYED_URL_HERE'; // Replace this!
 
         function login() {
             if(document.getElementById('usernameInput').value) {
@@ -179,14 +177,13 @@
                     if (cloudData.classes) {
                         db.classes = cloudData.classes;
                         db.students = cloudData.students;
-                        // NEW: Pull attendance and payments into Phone 2's local DB
                         db.attendance = cloudData.attendance || [];
                         db.payments = cloudData.payments || [];
                         save(); 
                         refreshDropdowns();
                         renderClasses();
                         showFullPaymentReport();
-                        showDailyAttendanceReport(); // Update the view immediately
+                        showDailyAttendanceReport();
                         updateSyncUI('sync-success');
                     }
                 })
@@ -337,19 +334,19 @@
             });
         }
 
-        // FIXED: This now reads from the synced 'db.attendance'
         function showDailyAttendanceReport() {
-            let date = document.getElementById('histAttDate').value;
-            let cls = document.getElementById('histAttClassSelect').value;
+            let dateVal = document.getElementById('histAttDate').value;
+            let clsVal = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
             tbody.innerHTML = '';
             
-            (db.students[cls] || []).forEach(s => {
-                // Search through the synced attendance history
-                let rec = db.attendance.find(a => 
-                    String(a.student).trim() === String(s).trim() && 
-                    String(a.className).trim() === String(cls).trim() && 
-                    String(a.date).includes(date)
+            if(!clsVal) return;
+
+            (db.students[clsVal] || []).forEach(s => {
+                let rec = db.attendance.slice().reverse().find(a => 
+                    String(a.student).trim().toLowerCase() === String(s).trim().toLowerCase() && 
+                    String(a.className).trim() === String(clsVal).trim() && 
+                    a.date === dateVal
                 );
                 
                 let text = rec ? rec.status : "Not Marked";
@@ -391,8 +388,7 @@
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
             .then(() => {
                 updateSyncUI('sync-success');
-                // Auto-refresh data after sending to ensure phone is in sync
-                setTimeout(fetchCloudData, 1500); 
+                setTimeout(fetchCloudData, 1500); // Auto-refresh phone memory
             })
             .catch(() => updateSyncUI('sync-error'));
         }
