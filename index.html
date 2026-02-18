@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Management - Attendance & Fees</title>
+    <title>GREAT LEARNERS - School Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,6 +13,14 @@
             min-height: 100vh; color: #333;
         }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        /* Institution Name Styling */
+        .inst-name {
+            text-align: center; color: white; font-size: 2.5em; font-weight: 800;
+            margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
         .header { 
             background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
@@ -20,7 +28,6 @@
         }
         .clock { font-size: 2.5em; font-weight: bold; color: #667eea; }
         
-        /* Sync Indicator Styles */
         #syncStatus {
             position: absolute; top: 10px; right: 20px; font-size: 12px;
             padding: 5px 12px; border-radius: 20px; background: #f3f4f6;
@@ -29,7 +36,6 @@
         .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #9ca3af; }
         .syncing .sync-dot { background: #3b82f6; animation: pulse 1s infinite; }
         .sync-success .sync-dot { background: #10b981; }
-        .sync-error .sync-dot { background: #ef4444; }
 
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
@@ -38,9 +44,7 @@
             background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
             align-items: center; justify-content: center;
         }
-        .login-box { 
-            background: white; padding: 40px; border-radius: 20px; text-align: center;
-        }
+        .login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; }
         
         .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; }
         .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; }
@@ -50,7 +54,7 @@
         .tab-content.active { display: block; }
 
         .form-group { margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px;}
         
         .btn { padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.3s; }
         .btn-primary { background: #667eea; color: white; }
@@ -58,7 +62,6 @@
         .btn-success { background: #10b981; color: white; }
 
         .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; }
-        
         .att-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
         .att-btns { display: flex; gap: 10px; }
         .att-btn { padding: 8px 15px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; }
@@ -72,14 +75,13 @@
         .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 14px; }
         .status-present { background: #d1fae5; color: #065f46; }
         .status-absent { background: #fee2e2; color: #991b1b; }
-        .status-none { background: #f3f4f6; color: #374151; }
     </style>
 </head>
 <body>
 
     <div id="loginPage">
         <div class="login-box">
-            <h2>🏫 School System</h2>
+            <h2>🏫 GREAT LEARNERS</h2>
             <input type="text" id="usernameInput" placeholder="Username">
             <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
         </div>
@@ -87,6 +89,8 @@
 
     <div id="mainApp" style="display: none;">
         <div class="container">
+            <h1 class="inst-name">GREAT LEARNERS</h1>
+            
             <div class="header">
                 <div id="syncStatus" class="">
                     <span class="sync-dot"></span> <span id="syncText">Cloud Idle</span>
@@ -100,8 +104,8 @@
                 <button class="tab-btn" onclick="switchTab('students')">Students</button>
                 <button class="tab-btn" onclick="switchTab('attendance')">📋 Attendance</button>
                 <button class="tab-btn" onclick="switchTab('fees')">💰 Fees</button>
-                <button class="tab-btn" onclick="switchTab('att-history')">📅 Attendance History</button>
-                <button class="tab-btn" onclick="switchTab('pay-history')">📊 Payment History</button>
+                <button class="tab-btn" onclick="switchTab('att-history')">📅 History</button>
+                <button class="tab-btn" onclick="switchTab('pay-history')">📊 Payments</button>
             </div>
 
             <div id="classes" class="tab-content active">
@@ -126,9 +130,9 @@
             <div id="attendance" class="tab-content">
                 <h2>Mark Attendance</h2>
                 <div class="form-group">
-                    <label>Select Date:</label>
+                    <label>Date:</label>
                     <input type="date" id="attendanceDate">
-                    <label>Select Class:</label>
+                    <label>Class:</label>
                     <select id="attClassSelect" onchange="loadAttendanceSheet()"></select>
                 </div>
                 <div id="attendanceSheet" class="list-container"></div>
@@ -137,40 +141,36 @@
 
             <div id="fees" class="tab-content">
                 <h2>Record Payment</h2>
+                <label>Select Class:</label>
                 <select id="feeClassSelect" onchange="loadFeeStudents()"></select>
-                <select id="feeStudentSelect" style="margin-top:10px"></select>
-                <input type="number" id="payAmount" placeholder="Amount ₹" style="margin-top:10px">
-                <button class="btn btn-success" style="width:100%; margin-top:10px" onclick="recordPayment()">Record Fee</button>
+                <label style="margin-top:10px; display:block;">Select Student:</label>
+                <select id="feeStudentSelect"></select>
+                <label style="margin-top:10px; display:block;">Amount (₹):</label>
+                <input type="number" id="payAmount" placeholder="Amount ₹">
+                <label style="margin-top:10px; display:block;">Description:</label>
+                <input type="text" id="payDesc" placeholder="e.g. Monthly Fee, Tournament, Uniform">
+                <button class="btn btn-success" style="width:100%; margin-top:20px" onclick="recordPayment()">Record Fee & Sync</button>
             </div>
 
             <div id="att-history" class="tab-content">
-                <h2>📅 View Attendance Records</h2>
-                <div class="form-group">
-                    <label>Select Date:</label>
-                    <input type="date" id="histAttDate" onchange="showDailyAttendanceReport()">
-                    <label>Select Class:</label>
-                    <select id="histAttClassSelect" onchange="showDailyAttendanceReport()"></select>
-                </div>
+                <h2>📅 Attendance History</h2>
+                <input type="date" id="histAttDate" onchange="showDailyAttendanceReport()">
+                <select id="histAttClassSelect" onchange="showDailyAttendanceReport()"></select>
                 <table id="attHistTable">
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Status (Selected Date)</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Student Name</th><th>Status</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
 
             <div id="pay-history" class="tab-content">
                 <div id="payReportArea">
-                    <h2>📊 Payment History (Full Report)</h2>
+                    <h2>📊 Payment History</h2>
                     <select id="histPayClassSelect" onchange="showFullPaymentReport()"></select>
                     <table id="payHistTable">
-                        <thead><tr><th>Student Name</th><th>Total Paid</th><th>Last Date</th></tr></thead>
+                        <thead><tr><th>Student</th><th>Description</th><th>Paid</th><th>Date</th></tr></thead>
                         <tbody></tbody>
                     </table>
-                </div>4
+                </div>
                 <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:10px">Download PDF Report</button>
             </div>
 
@@ -185,6 +185,7 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
+        // YOUR APP SCRIPT URL
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
         function login() {
@@ -205,9 +206,7 @@
             renderClasses();
         }
 
-        function updateClock() {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
 
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -221,30 +220,23 @@
             if(name && !db.classes.includes(name)) {
                 db.classes.push(name);
                 db.students[name] = [];
-                save();
-                renderClasses();
-                refreshDropdowns();
+                save(); renderClasses(); refreshDropdowns();
                 document.getElementById('newClassName').value = '';
-            }
-        }
-
-        function deleteClass(className) {
-            if(confirm(`Delete class ${className}? This also removes all students.`)) {
-                db.classes = db.classes.filter(c => c !== className);
-                delete db.students[className];
-                save();
-                renderClasses();
-                refreshDropdowns();
             }
         }
 
         function renderClasses() {
             document.getElementById('classesList').innerHTML = db.classes.map(c => `
-                <div class="att-row">
-                    <span><b>${c}</b></span>
-                    <button class="btn btn-danger" onclick="deleteClass('${c}')">Delete</button>
-                </div>
-            `).join('');
+                <div class="att-row"><span><b>${c}</b></span>
+                <button class="btn btn-danger" onclick="deleteClass('${c}')">Delete</button></div>`).join('');
+        }
+
+        function deleteClass(className) {
+            if(confirm(`Delete class ${className}?`)) {
+                db.classes = db.classes.filter(c => c !== className);
+                delete db.students[className];
+                save(); renderClasses(); refreshDropdowns();
+            }
         }
 
         function addStudent() {
@@ -252,50 +244,37 @@
             let name = document.getElementById('studentName').value.trim();
             if(cls && name) {
                 db.students[cls].push(name);
-                save();
-                renderStudentsList();
+                save(); renderStudentsList();
                 sendToGoogleSheets('New Student', { className: cls, studentName: name });
                 document.getElementById('studentName').value = '';
-            }
-        }
-
-        function deleteStudent(studentName) {
-            let cls = document.getElementById('classSelect').value;
-            if(confirm(`Remove ${studentName} from ${cls}?`)) {
-                db.students[cls] = db.students[cls].filter(s => s !== studentName);
-                save();
-                renderStudentsList();
             }
         }
 
         function renderStudentsList() {
             let cls = document.getElementById('classSelect').value;
             document.getElementById('studentsList').innerHTML = (db.students[cls] || []).map(s => `
-                <div class="att-row">
-                    <span>${s}</span>
-                    <button class="btn btn-danger" onclick="deleteStudent('${s}')">Delete</button>
-                </div>
-            `).join('');
+                <div class="att-row"><span>${s}</span><button class="btn btn-danger" onclick="deleteStudent('${s}')">Delete</button></div>`).join('');
+        }
+
+        function deleteStudent(studentName) {
+            let cls = document.getElementById('classSelect').value;
+            db.students[cls] = db.students[cls].filter(s => s !== studentName);
+            save(); renderStudentsList();
         }
 
         function loadAttendanceSheet() {
             let cls = document.getElementById('attClassSelect').value;
-            let container = document.getElementById('attendanceSheet');
             let list = db.students[cls] || [];
-            container.innerHTML = list.map(s => `
-                <div class="att-row" data-name="${s}">
-                    <span>${s}</span>
-                    <div class="att-btns">
-                        <button class="att-btn present" onclick="setAtt(this, 'Present')">P</button>
-                        <button class="att-btn absent" onclick="setAtt(this, 'Absent')">A</button>
-                    </div>
-                </div>
-            `).join('');
+            document.getElementById('attendanceSheet').innerHTML = list.map(s => `
+                <div class="att-row" data-name="${s}"><span>${s}</span>
+                <div class="att-btns">
+                    <button class="att-btn present" onclick="setAtt(this, 'Present')">P</button>
+                    <button class="att-btn absent" onclick="setAtt(this, 'Absent')">A</button>
+                </div></div>`).join('');
         }
 
         function setAtt(btn, status) {
-            let parent = btn.parentElement;
-            parent.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+            btn.parentElement.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         }
 
@@ -303,9 +282,7 @@
             let date = document.getElementById('attendanceDate').value;
             let cls = document.getElementById('attClassSelect').value;
             let rows = document.querySelectorAll('#attendanceSheet .att-row');
-            if(!cls) return alert("Select a class first");
-
-            db.attendance = db.attendance.filter(a => !(a.date === date && a.className === cls));
+            if(!cls) return alert("Select a class");
 
             rows.forEach(row => {
                 let name = row.getAttribute('data-name');
@@ -313,42 +290,36 @@
                 if(activeBtn) {
                     let statusValue = activeBtn.innerText === 'P' ? 'Present' : 'Absent';
                     db.attendance.push({ date, className: cls, student: name, status: statusValue });
-                    // Labels corrected for Google Sheets
-                    sendToGoogleSheets('Attendance', { 
-                        date: date, 
-                        className: cls, 
-                        student: name, 
-                        status: statusValue 
-                    });
+                    sendToGoogleSheets('Attendance', { date, className: cls, student: name, status: statusValue });
                 }
             });
-            save();
-            alert("Attendance Saved and Syncing!");
+            save(); alert("Attendance Saved & Syncing!");
         }
 
+        // --- FIXED FEE STUDENT DROPDOWN ---
         function loadFeeStudents() {
             let cls = document.getElementById('feeClassSelect').value;
-            document.getElementById('feeStudentSelect').innerHTML = (db.students[cls] || []).map(s => `<option>${s}</option>`).join('');
+            let students = db.students[cls] || [];
+            let select = document.getElementById('feeStudentSelect');
+            select.innerHTML = '<option value="">Select Student</option>' + students.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
         function recordPayment() {
             let cls = document.getElementById('feeClassSelect').value;
             let name = document.getElementById('feeStudentSelect').value;
             let amt = document.getElementById('payAmount').value;
+            let desc = document.getElementById('payDesc').value || "Fee Payment";
             let today = new Date().toISOString().split('T')[0];
 
-            if(amt && name) {
-                db.payments.push({ className: cls, student: name, amount: parseFloat(amt), date: today });
+            if(amt && name && cls) {
+                db.payments.push({ className: cls, student: name, amount: amt, description: desc, date: today });
                 save();
-                // Labels corrected for Google Sheets
-                sendToGoogleSheets('Payment', { 
-                    className: cls, 
-                    student: name, 
-                    amount: amt, 
-                    date: today 
-                });
-                alert("Payment Recorded and Syncing!");
+                sendToGoogleSheets('Payment', { className: cls, student: name, amount: amt, description: desc, date: today });
+                alert("Payment Recorded!");
                 document.getElementById('payAmount').value = '';
+                document.getElementById('payDesc').value = '';
+            } else {
+                alert("Please fill Class, Student and Amount.");
             }
         }
 
@@ -357,31 +328,26 @@
             let cls = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
             tbody.innerHTML = '';
-            if(!cls || !date) return;
-            let studentsInClass = (db.students[cls] || []).sort();
-            studentsInClass.forEach(s => {
-                let record = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
-                let statusText = record ? record.status : "Not Marked";
-                let statusClass = record ? (record.status === 'Present' ? 'status-present' : 'status-absent') : "status-none";
-                tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${statusClass}">${statusText}</span></td></tr>`;
+            (db.students[cls] || []).forEach(s => {
+                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
+                let text = rec ? rec.status : "Not Marked";
+                let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
+                tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${badge}">${text}</span></td></tr>`;
             });
         }
 
         function showFullPaymentReport() {
             let cls = document.getElementById('histPayClassSelect').value;
-            let studentsInClass = (db.students[cls] || []).sort();
-            document.querySelector('#payHistTable tbody').innerHTML = studentsInClass.map(s => {
-                let sPays = db.payments.filter(p => p.student === s && p.className === cls);
-                let total = sPays.reduce((sum, p) => sum + p.amount, 0);
-                let last = sPays.length ? sPays.sort((a,b) => new Date(b.date)-new Date(a.date))[0].date : "-";
-                return `<tr><td>${s}</td><td>₹${total}</td><td>${last}</td></tr>`;
-            }).join('');
+            let filtered = db.payments.filter(p => p.className === cls);
+            document.querySelector('#payHistTable tbody').innerHTML = filtered.map(p => `
+                <tr><td>${p.student}</td><td>${p.description}</td><td>₹${p.amount}</td><td>${p.date}</td></tr>
+            `).join('');
         }
 
         function refreshDropdowns() {
-            let options = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+            let opts = '<option value="">Select Class</option>' + db.classes.map(c => `<option value="${c}">${c}</option>`).join('');
             ['classSelect','attClassSelect','feeClassSelect','histAttClassSelect','histPayClassSelect'].forEach(id => {
-                document.getElementById(id).innerHTML = options;
+                document.getElementById(id).innerHTML = opts;
             });
         }
 
@@ -392,40 +358,26 @@
             localStorage.setItem('sc_attendance', JSON.stringify(db.attendance));
         }
 
-        function downloadPayPDF() {
-            html2pdf().from(document.getElementById('payReportArea')).save('Payment_Report.pdf');
-        }
+        function downloadPayPDF() { html2pdf().from(document.getElementById('payReportArea')).save('Fees_Report.pdf'); }
 
         function updateSyncUI(status) {
             const el = document.getElementById('syncStatus');
             const txt = document.getElementById('syncText');
             el.className = status;
-            if(status === 'syncing') txt.innerText = 'Syncing...';
-            if(status === 'sync-success') txt.innerText = 'Synced to Cloud';
-            if(status === 'sync-error') txt.innerText = 'Sync Failed';
-            setTimeout(() => { if(status !== 'syncing') { el.className = ''; txt.innerText = 'Cloud Idle'; } }, 3000);
+            txt.innerText = status === 'syncing' ? 'Syncing...' : (status === 'sync-success' ? 'Cloud Success' : 'Cloud Idle');
+            setTimeout(() => { if(status !== 'syncing') el.className = ''; }, 2000);
         }
 
-        function sendToGoogleSheets(dataType, dataPayload) {
-    updateSyncUI('syncing');
-    const formData = new URLSearchParams();
-    formData.append('type', dataType); 
-    
-    // This loops through your data (like className) and attaches it for Google to read
-    for (const key in dataPayload) {
-        formData.append(key, dataPayload[key]);
-    }
+        function sendToGoogleSheets(type, data) {
+            updateSyncUI('syncing');
+            const formData = new URLSearchParams();
+            formData.append('type', type);
+            for (const key in data) formData.append(key, data[key]);
 
-    fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-    .then(() => {
-        console.log('Data synced: ' + dataType);
-        updateSyncUI('sync-success');
-    })
-    .catch(error => {
-        console.error('Sync Error:', error);
-        updateSyncUI('sync-error');
-    });
-}
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+            .then(() => updateSyncUI('sync-success'))
+            .catch(() => updateSyncUI('sync-error'));
+        }
     </script>
 </body>
 </html>
