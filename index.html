@@ -13,38 +13,82 @@
             min-height: 100vh; color: #333;
         }
         .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
-        .inst-name { text-align: center; color: white; font-size: 2em; font-weight: 800; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3); letter-spacing: 1px; }
-        .header { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; position: relative; }
+        
+        .inst-name {
+            text-align: center; color: white; font-size: 2em; font-weight: 800;
+            margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+
+        .header { 
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; justify-content: space-between; 
+            align-items: center; flex-wrap: wrap; gap: 10px; position: relative;
+        }
+        
         .clock-area { display: flex; align-items: center; gap: 10px; }
         .clock { font-size: 1.8em; font-weight: bold; color: #667eea; }
-        .refresh-btn { background: #667eea; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
-        #syncStatus { position: absolute; top: 10px; right: 10px; font-size: 10px; padding: 4px 10px; border-radius: 20px; background: #f3f4f6; display: flex; align-items: center; gap: 5px; font-weight: bold; }
+        
+        .refresh-btn {
+            background: #667eea; color: white; border: none; border-radius: 50%;
+            width: 35px; height: 35px; cursor: pointer; font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #syncStatus {
+            position: absolute; top: 10px; right: 10px; font-size: 10px;
+            padding: 4px 10px; border-radius: 20px; background: #f3f4f6;
+            display: flex; align-items: center; gap: 5px; font-weight: bold;
+        }
         .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #9ca3af; }
         .syncing .sync-dot { background: #3b82f6; animation: pulse 1s infinite; }
         .sync-success .sync-dot { background: #10b981; }
+
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        #loginPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        #loginPage { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); z-index: 1000; display: flex; 
+            align-items: center; justify-content: center; padding: 20px;
+        }
         .login-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 400px; }
+        
         .tabs { display: flex; background: white; border-radius: 15px; padding: 5px; margin-bottom: 20px; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+        .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { flex: 1; padding: 12px 15px; border: none; background: none; cursor: pointer; border-radius: 10px; transition: 0.3s; white-space: nowrap; font-size: 14px; }
         .tab-btn.active { background: #667eea; color: white; font-weight: bold; }
+
         .tab-content { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 50vh; }
         .tab-content.active { display: block; }
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border-radius: 10px; border: 1px solid #e1e5e9; }
-        table { width: 100%; border-collapse: collapse; min-width: 500px; }
+
+        /* SLIDER TABLE CONTAINER */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 500px; } /* Ensures sliding on mobile */
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; font-size: 14px; }
         th { background: #f8fafc; color: #667eea; font-weight: 700; }
+
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; margin-top: 5px; appearance: none; }
+        
         .btn { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; transition: 0.3s; font-weight: bold; }
         .btn-primary { background: #667eea; color: white; }
         .btn-danger { background: #ef4444; color: white; padding: 6px 12px; font-size: 12px; }
         .btn-success { background: #10b981; color: white; }
+
         .list-container { max-height: 400px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 5px; }
         .att-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
         .att-btns { display: flex; gap: 5px; }
         .att-btn { padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; cursor: pointer; font-weight: bold; }
         .att-btn.present.active { background: #10b981; color: white; border-color: #10b981; }
         .att-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
+
         .status-badge { padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
         .status-present { background: #d1fae5; color: #065f46; }
         .status-absent { background: #fee2e2; color: #991b1b; }
@@ -147,6 +191,7 @@
                 </div>
                 <button class="btn btn-primary" onclick="downloadPayPDF()" style="margin-top:15px; width:100%;">Download PDF Report</button>
             </div>
+
         </div>
     </div>
 
@@ -158,7 +203,7 @@
             attendance: JSON.parse(localStorage.getItem('sc_attendance')) || []
         };
 
-        const scriptURL = 'YOUR_DEPLOYED_URL_HERE'; // Replace this!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6ej1RfgfmJS_Bs9Emsoott98yjQC5wDZwCp8sfJIQo6HfEuoYwH_xE6CMsIas0kF-A/exec';
 
         function login() {
             if(document.getElementById('usernameInput').value) {
@@ -183,7 +228,6 @@
                         refreshDropdowns();
                         renderClasses();
                         showFullPaymentReport();
-                        showDailyAttendanceReport();
                         updateSyncUI('sync-success');
                     }
                 })
@@ -335,20 +379,12 @@
         }
 
         function showDailyAttendanceReport() {
-            let dateVal = document.getElementById('histAttDate').value;
-            let clsVal = document.getElementById('histAttClassSelect').value;
+            let date = document.getElementById('histAttDate').value;
+            let cls = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
             tbody.innerHTML = '';
-            
-            if(!clsVal) return;
-
-            (db.students[clsVal] || []).forEach(s => {
-                let rec = db.attendance.slice().reverse().find(a => 
-                    String(a.student).trim().toLowerCase() === String(s).trim().toLowerCase() && 
-                    String(a.className).trim() === String(clsVal).trim() && 
-                    a.date === dateVal
-                );
-                
+            (db.students[cls] || []).forEach(s => {
+                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
                 let text = rec ? rec.status : "Not Marked";
                 let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
                 tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${badge}">${text}</span></td></tr>`;
@@ -386,10 +422,7 @@
             formData.append('type', type);
             for (const key in data) formData.append(key, data[key]);
             fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
-            .then(() => {
-                updateSyncUI('sync-success');
-                setTimeout(fetchCloudData, 1500); // Auto-refresh phone memory
-            })
+            .then(() => updateSyncUI('sync-success'))
             .catch(() => updateSyncUI('sync-error'));
         }
     </script>
