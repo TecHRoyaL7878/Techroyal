@@ -61,7 +61,6 @@
         .tab-content { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-height: 50vh; }
         .tab-content.active { display: block; }
 
-        /* SLIDER TABLE CONTAINER */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -71,7 +70,7 @@
             border: 1px solid #e1e5e9;
         }
 
-        table { width: 100%; border-collapse: collapse; min-width: 500px; } /* Ensures sliding on mobile */
+        table { width: 100%; border-collapse: collapse; min-width: 500px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e1e5e9; font-size: 14px; }
         th { background: #f8fafc; color: #667eea; font-weight: 700; }
 
@@ -228,6 +227,7 @@
                         refreshDropdowns();
                         renderClasses();
                         showFullPaymentReport();
+                        showDailyAttendanceReport(); // Ensure history refreshes after sync
                         updateSyncUI('sync-success');
                     }
                 })
@@ -379,12 +379,19 @@
         }
 
         function showDailyAttendanceReport() {
-            let date = document.getElementById('histAttDate').value;
+            let dateInput = document.getElementById('histAttDate').value;
             let cls = document.getElementById('histAttClassSelect').value;
             let tbody = document.querySelector('#attHistTable tbody');
+            if(!tbody) return;
             tbody.innerHTML = '';
+            if(!cls) return;
+
             (db.students[cls] || []).forEach(s => {
-                let rec = db.attendance.find(a => a.student === s && a.className === cls && a.date === date);
+                let rec = db.attendance.find(a => 
+                    a.student === s && 
+                    a.className === cls && 
+                    String(a.date).includes(dateInput)
+                );
                 let text = rec ? rec.status : "Not Marked";
                 let badge = rec ? (rec.status === 'Present' ? 'status-present' : 'status-absent') : '';
                 tbody.innerHTML += `<tr><td>${s}</td><td><span class="status-badge ${badge}">${text}</span></td></tr>`;
